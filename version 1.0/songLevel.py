@@ -23,8 +23,7 @@ Time = 0.0#variavel de tempo
 deltaTime = 4.0#diferença de tempo onde começa a ver as notas, para poder pressiona-las
 Frame = 0
 numberOfButtons = 0
-isRunning = True
-dt = 0.0
+
 
 #clock
 gameDisplay = pygame.display.set_mode((display_Width, display_Height))
@@ -199,102 +198,18 @@ def ButtonsToDraw():
 def drawScene():
     global gameDisplay
     global background_surface
-    global tex
     #gameDisplay.fill((0.0,0.0,0.0))
     gameDisplay.blit(background_surface,(0,0))
-    tex.draw_textures(gameDisplay)
     ButtonsToDraw()
     
 
 
-
-
-#class texture para poder dezenhar no braço da "guitarra"
-def Texturize(image,size=None):
-    if size:
-        (w,h) = size 
-    else:
-        (w,h) = image.get_size()
-    texture = []
-    for y in range(h): 
-        row=pygame.Surface((w,1))
-        row.blit(image,(0,-y))
-        texture+=[row]
-    return texture
-class Texture:
-    rotX,rotY = -18.5/180*math.pi,0;
-    pos = [0,1.8,-1.2]
-    def __init__(self,dir):
-        global deltaTime
-        global display_Height
-        global display_Width
-        self.image = pygame.image.load(dir);
-        self.image = Image.scaleImage(self.image,(2.0,2.0))
-        size = self.image.get_size()
-        self.texture = [Texturize(self.image,size),size]
-        self.fractions = [2*y/size[1] for y in range(size[1])]
-        self.range = 6
-        self.cx = display_Width/2
-        self.cy = display_Height/2
-        self.speed = (0.95-0.2)*display_Height/100
-        self.z = 0
-        
-    def rotate2d(self,pos,rad): 
-        x,y=pos
-        s=math.sin(rad)
-        c = math.cos(rad)
-        return x*c-y*s,x*s+y*c
-
-    def rotate3d(self,pos,rot):
-        x,y,z = pos
-        if rot[2]: 
-            x,y = self.rotate2d((x,y),rot[2])
-        if rot[1]: 
-            z,x = self.rotate2d((z,x),rot[1])
-        if rot[0]: 
-            y,z = self.rotate2d((y,z),rot[0])
-        return x,y,z
-    def pos2d(self,x,z):
-        X,Y,Z = self.pos
-        x,y,z = self.rotate3d((x-X,-Y,z-Z),(self.rotX,self.rotY,0))
-        f = 300/z if z>0 else 90000
-        return int(self.cx+x*f),int(self.cy-y*f)
-    def update(self):
-        global dt
-        global isRunning
-
-        if self.speed: # if there's speed, let's move.
-            s = dt*self.speed
-            self.z+=s
-            #for chord in self.chords: chord[1]-=s # move chords towards target
-
-            if not isRunning:
-                self.speed-=dt*1.7 # slow down
-                if self.speed<0.2: self.speed = 0 # slow enough, let's just stop...
-
-        #self.running = pygame.mixer.music.get_busy() # is the song still playing?
-
-        #if not self.joysticks: self.init_joysticks()
-    def draw_textures(self,screen):
-        t,(w,h) = self.texture; 
-        s = 2 # box size
-        for Z in range(0,self.range,s):
-            for y in range(h):
-                f = self.fractions[y]
-                z = (f+Z-self.z)%self.range
-                a,b = self.pos2d(-1,z),self.pos2d(1,z) # left and right point of line (image to be drawn on)
-                try: screen.blit(pygame.transform.scale(t[-y],(b[0]-a[0],s)),a) # not fixed for rotating cam left or right, only up and down so far
-                except: pass # incase there's a problem
-tex = Texture("texture.png")
 def Update():
     global Time
     global onPause
     global Frame
     global gameExit
     global FPS
-    global tex
-    global gameDisplay
-    global dt
     #global numberOfButtons
     #numberOfButtons = makesList(numberOfButtons)
     #flag = 4
@@ -322,11 +237,7 @@ def Update():
          #   break
     #flag = 5
     #print('flag' + str(flag))
-    tex.update()
-    
     drawScene()
-
-    #tex.draw_textures(gameDisplay)
     #flag = 6
     #print('flag' + str(flag))
     pygame.display.flip()
