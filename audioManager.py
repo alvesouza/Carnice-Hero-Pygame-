@@ -51,7 +51,7 @@ class music:
     def setTime(self,time):
         pygame.mixer.music.set_pos(time)
     def getTime(self):
-        return pygame.mixer.music.get_pos
+        return pygame.mixer.music.get_pos()
     def replay(self):
         pygame.mixer.music.rewind()
 
