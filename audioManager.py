@@ -52,12 +52,12 @@ class music:
         pygame.mixer.music.set_pos(time)
     def getTime(self):
         return pygame.mixer.music.get_pos()
-    def replay(self):
+    def rewind(self):
         pygame.mixer.music.rewind()
 
 def teste():
-    display_Width = 1240
-    display_Height = 720
+    display_Width = 600
+    display_Height = 300
     FPS = 2
     gameExit = False
     Time = 0.0
@@ -66,38 +66,39 @@ def teste():
     clock = pygame.time.Clock()
     background_surface = pygame.Surface((display_Width, display_Height))
     background_surface.fill((0, 0, 0))
-    song = music("Moicano.mp3")
+    song = music("sound mp3\Olodum.mp3")
     #print('flag' + str(flag))
-    while True:
+    print("Aperte 'a' para play")
+    print("Aperte 's' para pause")
+    print("Aperte 'd' para rewind")
+    print("Aperte 'f' para reduzir o som pela metade")
+    print("Aperte 'g' para dizer o volume da musica")
+    while not gameExit:
         dt = clock.tick(FPS)/1000
         if True:
             Frame = Frame + 1
             Time = Time + dt
-            if Frame % 160 == 0:
-                print(Time)
-                print("Frame: " + " " + str(Frame))
-            elif Frame % 90 == 0:
-                song.replay()
-                print("replay")
-            elif Frame % 70 == 0:
-                print("o volume é "+ str(song.volumeIs()))
-            elif Frame%60 == 0:
-                song.setVolume(song.volumeIs()/2)
-                print("reduziu o volume pela metade")
-            elif Frame % 50 == 0:
-                song.play()
-                print("play")
-            elif Frame % 40 == 0:
-                song.pause()
-                print("Pause")
-            elif Frame % 30 == 0:
-                print("tenta play")
-                song.play()
-            elif Frame % 20 == 0:
-                song.pause()
-                print("Pause")
-            elif Frame % 10 == 0:
-                song.play()
-                print("Play")
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    gameExit = True
+                    gameDisplay.blit(background_surface,(0,0))
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_a:
+                        song.play()
+                        print("Play")
+                    elif event.key == pygame.K_s:
+                        song.pause()
+                        print("Pause")
+                    elif event.key == pygame.K_d:
+                        song.rewind()
+                        print("Rewind")
+                    elif event.key == pygame.K_f:
+                        song.setVolume(song.volumeIs()/2)
+                        print("reduziu o volume pela metade")
+                    elif event.key == pygame.K_g:
+                        print("o volume é "+ str(song.volumeIs()))
+            pygame.display.flip()
+
+    pygame.quit()
 
 teste()
